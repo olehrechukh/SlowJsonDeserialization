@@ -43,8 +43,6 @@ internal class StreamWrapper : Stream
 
     public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
     {
-        Console.WriteLine($"read-byte \t {buffer.Length} \t {offset} \t {count}");
-
         return stream.ReadAsync(buffer, offset, count, cancellationToken);
     }
 
@@ -59,5 +57,18 @@ internal class StreamWrapper : Stream
     public override void Write(byte[] buffer, int offset, int count)
     {
         stream.Write(buffer, offset, count);
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (!disposing)
+        {
+            stream.Dispose();
+        }
+    }
+
+    public override ValueTask DisposeAsync()
+    {
+        return stream.DisposeAsync();
     }
 }

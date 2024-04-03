@@ -31,10 +31,10 @@ async Task<TimeSpan> Measure(HttpCompletionOption httpCompletionOption, int coun
     var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, $"streaming?count={count}");
 
     var stopwatch = Stopwatch.StartNew();
-    var response = await httpClient.SendAsync(httpRequestMessage, httpCompletionOption,
+    using var response = await httpClient.SendAsync(httpRequestMessage, httpCompletionOption,
         cancellationToken);
 
-    var responseStream = new StreamWrapper(await response.Content.ReadAsStreamAsync(cancellationToken));
+    await using var responseStream = new StreamWrapper(await response.Content.ReadAsStreamAsync(cancellationToken));
 
     var bufferSize = 10 * 1024 * 1024;
     var options = new JsonSerializerOptions
