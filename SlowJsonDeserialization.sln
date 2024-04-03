@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlowJsonDeserialization.Api", "SlowJsonDeserialization.Api\SlowJsonDeserialization.Api.csproj", "{27878CDF-29FD-4F13-A155-E86C572ED23B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlowJsonDeserialization.Client", "SlowJsonDeserialization.Client\SlowJsonDeserialization.Client.csproj", "{05D33F0D-48CA-4DF1-A77B-550A28E37A06}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{27878CDF-29FD-4F13-A155-E86C572ED23B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27878CDF-29FD-4F13-A155-E86C572ED23B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27878CDF-29FD-4F13-A155-E86C572ED23B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27878CDF-29FD-4F13-A155-E86C572ED23B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05D33F0D-48CA-4DF1-A77B-550A28E37A06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05D33F0D-48CA-4DF1-A77B-550A28E37A06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05D33F0D-48CA-4DF1-A77B-550A28E37A06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05D33F0D-48CA-4DF1-A77B-550A28E37A06}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
