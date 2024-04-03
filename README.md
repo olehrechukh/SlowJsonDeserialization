@@ -23,3 +23,12 @@ Launch the client (open a new terminal in the root project)
 ``` 
 dotnet run -c Release --project .\SlowJsonDeserialization.Client\SlowJsonDeserialization.Client.csproj
 ```
+# Benchmarks
+
+| Json size, bytes | ResponseHeadersRead, ms | ResponseContentRead, ms |
+|-----------------:|------------------------:|------------------------:|
+|         15777870 |                    1287 |                     597 |
+|         31555750 |                   12065 |                     826 |
+|         47333610 |                   21662 |                    1043 |
+|         63111489 |                   30793 |                    1492 |
+|         78889354 |                   42458 |                    2003 |

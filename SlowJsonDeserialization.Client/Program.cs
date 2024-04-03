@@ -4,33 +4,37 @@ using System.Diagnostics;
 using System.Text.Json;
 using SlowJsonDeserialization.Client;
 
-var httpClient = new HttpClient()
+var httpClient = new HttpClient
 {
     BaseAddress = new Uri("http://localhost:5021/")
 };
 var cancellationToken = CancellationToken.None;
 
-var contentReadTime = await Measure(HttpCompletionOption.ResponseContentRead);
-Console.WriteLine(new string('-', 64));
-var headersReadTime = await Measure(HttpCompletionOption.ResponseHeadersRead);
+Console.WriteLine("Starting the application...");
 
-var diff = headersReadTime - contentReadTime;
+foreach (var count in Enumerable.Range(1, 5))
+{
+    var headersReadTime = await Measure(HttpCompletionOption.ResponseHeadersRead, count);
+    var contentReadTime = await Measure(HttpCompletionOption.ResponseContentRead, count);
 
-Console.WriteLine();
-Console.WriteLine(
-    $"Diff between {HttpCompletionOption.ResponseHeadersRead} and {HttpCompletionOption.ResponseContentRead} response is {diff.TotalMilliseconds} ms");
+    var diff = headersReadTime - contentReadTime;
+    Console.WriteLine(
+        $"Diff between {HttpCompletionOption.ResponseHeadersRead} and {HttpCompletionOption.ResponseContentRead} response is {diff.TotalMilliseconds} ms");
+
+    Console.WriteLine();
+}
+
 return;
 
-async Task<TimeSpan> Measure(HttpCompletionOption httpCompletionOption)
+async Task<TimeSpan> Measure(HttpCompletionOption httpCompletionOption, int count)
 {
-    var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, "streaming");
-    Console.WriteLine($"Sending the request with {httpCompletionOption} option");
+    var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, $"streaming?count={count}");
 
     var stopwatch = Stopwatch.StartNew();
     var response = await httpClient.SendAsync(httpRequestMessage, httpCompletionOption,
         cancellationToken);
 
-    var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+    var responseStream = new StreamWrapper(await response.Content.ReadAsStreamAsync(cancellationToken));
 
     var bufferSize = 10 * 1024 * 1024;
     var options = new JsonSerializerOptions
@@ -39,14 +43,14 @@ async Task<TimeSpan> Measure(HttpCompletionOption httpCompletionOption)
         DefaultBufferSize = bufferSize
     };
 
-    var weatherForecasts = await JsonSerializer
+    await JsonSerializer
         .DeserializeAsyncEnumerable<WeatherForecast>(responseStream, options, cancellationToken)
         .ToList();
 
     var elapsed = stopwatch.Elapsed;
 
     Console.WriteLine(
-        $"Request-response takes {elapsed.TotalMilliseconds} ms for {weatherForecasts.SelectMany(x => x!.LargeField).Count()} elements");
+        $"Request-response {httpCompletionOption} takes {elapsed.TotalMilliseconds} ms for {responseStream.BytesRead} bytes");
 
     return elapsed;
 }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using SlowJsonDeserialization.Client;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,14 +10,14 @@ var summaries = new[]
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
-app.MapGet("/streaming", WeatherForecasts);
+app.MapGet("/streaming", ([FromQuery] int count) => EnumerateWeatherForecasts(count));
 
 app.Run();
 return;
 
-async IAsyncEnumerable<WeatherForecast> WeatherForecasts()
+async IAsyncEnumerable<WeatherForecast> EnumerateWeatherForecasts(int count)
 {
-    foreach (var index in Enumerable.Range(1, 3))
+    foreach (var index in Enumerable.Range(1, count))
     {
         yield return new WeatherForecast
         (
