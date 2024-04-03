@@ -10,13 +10,18 @@ var httpClient = new HttpClient()
 };
 var cancellationToken = CancellationToken.None;
 
-await Measure(HttpCompletionOption.ResponseContentRead);
+var contentReadTime = await Measure(HttpCompletionOption.ResponseContentRead);
 Console.WriteLine(new string('-', 64));
-await Measure(HttpCompletionOption.ResponseHeadersRead);
+var headersReadTime = await Measure(HttpCompletionOption.ResponseHeadersRead);
 
+var diff = headersReadTime - contentReadTime;
+
+Console.WriteLine();
+Console.WriteLine(
+    $"Diff between {HttpCompletionOption.ResponseHeadersRead} and {HttpCompletionOption.ResponseContentRead} response is {diff.TotalMilliseconds} ms");
 return;
 
-async Task Measure(HttpCompletionOption httpCompletionOption)
+async Task<TimeSpan> Measure(HttpCompletionOption httpCompletionOption)
 {
     var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, "streaming");
     Console.WriteLine($"Sending the request with {httpCompletionOption} option");
@@ -38,8 +43,10 @@ async Task Measure(HttpCompletionOption httpCompletionOption)
         .DeserializeAsyncEnumerable<WeatherForecast>(responseStream, options, cancellationToken)
         .ToList();
 
-    var elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+    var elapsed = stopwatch.Elapsed;
 
     Console.WriteLine(
-        $"Request-response takes {elapsedMilliseconds} ms for {weatherForecasts.SelectMany(x => x!.LargeField).Count()} elements");
+        $"Request-response takes {elapsed.TotalMilliseconds} ms for {weatherForecasts.SelectMany(x => x!.LargeField).Count()} elements");
+
+    return elapsed;
 }
